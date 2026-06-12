@@ -146,7 +146,7 @@ header {
 /* vignette over the scene, under the UI */
 #vignette {
   position: fixed; inset: 0; z-index: 2; pointer-events: none;
-  background: radial-gradient(115% 95% at 50% 47%, transparent 52%, rgba(0, 0, 0, 0.46) 100%);
+  background: radial-gradient(115% 95% at 50% 47%, transparent 60%, rgba(0, 0, 0, 0.30) 100%);
 }
 
 /* hint */
@@ -713,13 +713,13 @@ var PW = (function () {
         'vec3 L=normalize(vec3(-0.55,0.50,0.60));' +
         'float facing=clamp(vN.z,0.0,1.0);' +
         'float diff=max(dot(vN,L),0.0);' +
-        'vec3 edge=vec3(0.006,0.011,0.024);' +
-        'vec3 centre=vec3(0.042,0.078,0.150);' +
-        'vec3 ocean=mix(edge,centre,pow(facing,0.9));' +
-        'ocean*=(0.40+0.95*diff);' +
+        'vec3 edge=vec3(0.022,0.046,0.092);' +
+        'vec3 centre=vec3(0.120,0.225,0.400);' +
+        'vec3 ocean=mix(edge,centre,pow(facing,0.85));' +
+        'ocean*=(0.66+0.52*diff);' +
         'vec3 H=normalize(L+vec3(0.0,0.0,1.0));' +
-        'float spec=pow(max(dot(vN,H),0.0),48.0)*0.28;' +
-        'ocean+=vec3(0.30,0.44,0.60)*spec;' +
+        'float spec=pow(max(dot(vN,H),0.0),48.0)*0.30;' +
+        'ocean+=vec3(0.32,0.46,0.62)*spec;' +
         'gl_FragColor=vec4(ocean,1.0);}'
     })
   ));
@@ -778,7 +778,7 @@ var PW = (function () {
       }
       return false;
     }
-    var pts = [], bri = [], tier = [], stepDeg = 1.05, seed = 7;
+    var pts = [], bri = [], tier = [], stepDeg = 0.72, seed = 7;
     for (var lat = -84; lat <= 84; lat += stepDeg) {
       var lngStep = stepDeg / Math.max(Math.cos(lat * Math.PI / 180), 0.06);
       var off = (lat / stepDeg % 2) * lngStep * 0.5;
@@ -787,7 +787,7 @@ var PW = (function () {
           var p = v3(lat, lng, R * 1.003);
           pts.push(p.x, p.y, p.z);
           seed = (seed * 16807 + 19) % 2147483647;
-          bri.push(0.60 + (seed % 1000) / 1000 * 0.80);
+          bri.push(0.78 + (seed % 1000) / 1000 * 0.55);
           tier.push(seed % 7 === 0 ? 1.5 : (seed % 3 === 0 ? 1.18 : 0.92));
         }
       }
@@ -803,16 +803,16 @@ var PW = (function () {
         'vec3 nrm=normalize(normalMatrix*normalize(position));' +
         'vec3 L=normalize(vec3(-0.55,0.50,0.60));' +
         'float diff=max(dot(nrm,L),0.0);' +
-        'vB=aB*(0.40+0.85*diff);' +
+        'vB=aB*(0.62+0.55*diff);' +
         'vec4 mv=modelViewMatrix*vec4(position,1.0);' +
-        'gl_PointSize=min(aT*1.45*(300.0/-mv.z),4.6);' +
+        'gl_PointSize=min(aT*1.30*(300.0/-mv.z),4.4);' +
         'gl_Position=projectionMatrix*mv;}',
       fragmentShader:
         'varying float vB;void main(){' +
         'vec2 d=gl_PointCoord-vec2(0.5);float r=length(d)*2.0;' +
         'if(r>1.0)discard;' +
         'float a=smoothstep(1.0,0.35,r);' +
-        'gl_FragColor=vec4(vec3(0.27,0.43,0.63)*vB,a*0.92);}',
+        'gl_FragColor=vec4(vec3(0.44,0.62,0.82)*vB,a*0.95);}',
       transparent: true, depthWrite: false
     })));
   })();
